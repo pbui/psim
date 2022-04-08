@@ -1,0 +1,125 @@
+--------------------------------------------------------------------------------
+PSIM
+--------------------------------------------------------------------------------
+
+Author
+------
+
+Peter Bui <pbui@cse.nd.edu>
+
+--------------------------------------------------------------------------------
+
+Description
+-----------
+
+PSIM is simple assembler/simulator suite for the ISA found in Vahid's Digital
+Design textbook.  The syntax of the assembler mostly follows that of the
+textbook with the exception that semi-colons are not needed at the end of each
+assembly line.  Likewise, the code is split into a data and text segment
+resembling that of MIPS.  This is because the simulator uses a unified memory
+architecture.  Example assembly source code is available in this package.
+
+The software is still requires testing and bug checking, so please free feel to
+file bug reports or suggestions.
+
+--------------------------------------------------------------------------------
+
+ChangeLog
+---------
+
+*   11/07/2007
+    -	Assembler supports MOVR R1, R0, @A (ie. label constant for MOVR)
+    -	Assembler supports WORD 0, 1, 2, 3, 4 (ie. comma separated array)
+
+*   11/06/2007
+    -	Changed pasm to output either unified memory or non-unified memory
+	binary file (psim requires unified memory, default is non-unified
+	memory that works with verilog)
+
+*   11/01/2007
+    -	Support files made on Windows (ie. \r\n end of lines)
+    -	Assembler outputs error when label is undefined
+
+*   10/18/2007
+    -	Implemented MOV I/O assembler and simulator instruction
+
+*   10/16/2007
+    -   Implemented MOVR
+    -   Added Address-field type to assembler so that you can load actual
+	addresses:
+	MOV    R0, @A   // Converts address of label A to constant
+    -   Changed assembler to use token_is_* helper functions (this fixes the
+	JMP label bug)
+
+--------------------------------------------------------------------------------
+
+Known Bugs/Issues
+-----------------
+
+*   10/11/2007: JMP, JMPN, JMPZ only work w/ labels and not numeric offsets
+    10/16/2007: Fixed in latest version
+
+*   10/11/2007: Labels must be on the same line as instruction:
+    Foo:
+	    MOV	    R0, #1  // Invalid
+    Foo:    MOV	    R0, #1  // Valid
+
+*   10/16/2007: Non-existant labels do not throw error in assembler
+    11/01/2007: Fixed in latest version
+
+*   10/16/2007: pasm doesn't handle multiple files correctly
+    10/17/2007: Fixed in latest version
+
+--------------------------------------------------------------------------------
+
+Build
+-----
+
+Extract the tarball and run make:
+
+$   tar -xzvf psim.tar.gz
+$   cd psim
+$   make
+
+--------------------------------------------------------------------------------
+
+Usage
+-----
+
+To use the assembler:
+
+$   ./pasm ex1.s
+
+This will create a non-unified memory binary output file ex1.bin
+
+$   ./pasm u ex1.s
+
+This will create a unified memory binary output file ex1.ubin
+
+To use the simulator:
+
+    Command   Description
+    ---------------------------------------------
+    l <file>  Load binary file (must be unified memory)
+    i <p> <v> Set pregister <p> to <v>
+    o         Print i/o pregister file
+    p         Print register file, i/o, and memory
+    m <s> <e> Print memory regions from s to e (s defaults to 0, e to end of memory)
+    r         Print register file
+    s <n>     Step n times (n defaults to 1)
+    q         Quit this program
+
+$   ./psim
+[0000]-> l ex1.ubin
+[0001]-> p
+[0002]-> i 2 50
+[0003]-> s 100
+[0004]-> r
+[0005]-> q
+
+This loads the source binary, prints out the register, io, and memory contents,
+sets io p-register 2 to 50, steps 100 times, prints out the register contents
+and then quits.  Check out the help message by entering 'h' into psim to find
+out about the other commands in the simulator.
+
+--------------------------------------------------------------------------------
